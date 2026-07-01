@@ -1,0 +1,74 @@
+# Advanced House Price Prediction Pipeline
+
+This repository contains an end-to-end machine learning pipeline built to predict residential real estate sale prices using advanced feature engineering, systematic data imputation, and regression modeling.
+
+---
+
+## 📌 Project Overview
+Predicting property valuation requires a robust balance of structural features, spatial variables, and quality metrics. This project parses a multi-attribute house dataset to clean anomalies, handle missing indicators, engineer predictive factors, and optimize regression algorithms to minimize prediction error.
+
+---
+
+## 🧭 Pipeline Architecture & Key Steps
+
+### 1. Exploratory Data Auditing
+* **Dimensions:** Analyzed 1,460 source observations spanning 81 distinct feature columns (43 categorical, 35 numerical).
+* **Anomalies:** Identified structural features like `SalePrice` and `LotArea` displaying significant statistical variance and right-skewed trends.
+
+### 2. Rigorous Data Preprocessing
+* **High-Sparsity Drops:** Eliminated columns exceeding a 40% missingness threshold (`PoolQC`, `MiscFeature`, `Alley`) to defend downstream models against noise.
+* **Differentiated Imputation:** Categorical null values were imputed with column modes, while numerical missing blocks were filled with column medians.
+* **Mathematical Rescaling:** Applied an outlier-robust Interquartile Range (IQR) filter on internal living space (`GrLivArea`) and a logarithmic transformation to normalized linear target patterns (`SalePrice`).
+
+### 3. Systematic Feature Engineering & Encoding
+* **Ordinal Mapping:** Transformed critical qualitative features (`ExterQual`, `BsmtQual`, `KitchenQual`, `HeatingQC`) into numeric ranks.
+* **One-Hot Expansion:** Dummy-encoded complex spatial elements (`Neighborhood`, `MSZoning`, `SaleType`) into 39 mathematical flag dimensions.
+* **Synthesized Variables:** Engineered two macro-indicators to capture foundational trends:
+  * `TotalSF` = Total Basement Square Footage + First Floor Space + Second Floor Space.
+  * `HouseAge` = Numerical difference between transaction year (`YrSold`) and year built (`YearBuilt`).
+
+### 4. Dimensional Standardization
+* Applied scikit-learn's `StandardScaler` to align structural dimensions on a matching normal distributions scale (Mean = 0, Std = 1), resolving scale variance blocks before linear analysis.
+
+---
+
+## 📈 Model Performance & Evaluation
+
+The processed vector space was split into an 80/20 train/test distribution (1,143 training rows vs. 286 evaluation validation steps) across 254 unique final feature inputs. Three distinct regression variations were tested:
+
+| Model Indicator | Mean Absolute Error (MAE) | Root Mean Squared Error (RMSE) | R-squared (R²) Score |
+| :--- | :---: | :---: | :---: |
+| **LinearRegression** | **0.006768** | **0.010068** | **87.91%** |
+| **RandomForestRegressor** | 0.006788 | 0.010332 | 87.27% |
+| **DecisionTreeRegressor** | 0.009617 | 0.014083 | 76.36% |
+
+### Key Experimental Discoveries:
+* **The Winner:** **Linear Regression** outperformed more complex architectures, securing the lowest model error profile (MAE: ~0.0067) and accounting for **87.91% of variance** in target metrics.
+* **The Baseline:** Random Forest performed with comparable accuracy, demonstrating structural stability with minimal overfitting tendencies compared to the singular Decision Tree variant.
+
+---
+
+## 🛠️ Project File Requirements
+
+Ensure your working directories mimic this deployment block to ensure proper script execution:
+```text
+├── HousingProject.ipynb     # Jupyter/Colab notebook with your source code
+├── data/
+│   └── train.csv            # The source housing records dataset (1460 rows x 81 columns)
+└── requirements.txt         # Package dependencies file
+```
+
+---
+
+## 💻 Environmental Deployment
+
+1. Clone this code folder to your terminal:
+   ```bash
+   git clone https://github.com
+   cd house-price-prediction
+   ```
+2. Activate and install all necessary computational library frameworks:
+   ```bash
+   pip install pandas numpy scikit-learn matplotlib seaborn
+   ```
+3. Run the processing blocks inside a Jupyter environment or run your local Python interpreter to generate model evaluation plots.
